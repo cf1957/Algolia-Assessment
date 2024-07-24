@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algolia Search Demo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7.1.0/themes/satellite.min.css">
+    <style>
+        .ais-InstantSearch__root {
+            font-family: Arial, sans-serif;
+        }
+        .hit img {
+            max-width: 100px;
+            max-height: 100px;
+        }
+        .hit {
+            display: flex;
+            align-items: center;
+        }
+        .hit-info {
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="searchbox"></div>
+    <div id="hits"></div>
+    <div id="facets"></div>
+    <div id="price-range"></div>
+    <!-- Ensure the order of scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.11.0/dist/algoliasearch-lite.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.47.0"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const search = instantsearch({
+                indexName: 'products',
+                searchClient: algoliasearch('EKQCKC4GRJ', '8431717fab3618d7f6e194a3f6e0f89d')
+            });
+
+            search.addWidgets([
+                instantsearch.widgets.searchBox({
+                    container: '#searchbox',
+                    placeholder: 'Search for products...'
+                }),
+                instantsearch.widgets.hits({
+                    container: '#hits',
+                    templates: {
+                        item: `
+                            <div class="hit">
+                                <img src="{{image}}" alt="{{name}}">
+                                <div class="hit-info">
+                                    <h4>{{{_highlightResult.name.value}}}</h4>
+                                    <p>{{price}} USD</p>
+                                </div>
+                            </div>
+                        `
+                    }
+                }),
+                instantsearch.widgets.refinementList({
+                    container: '#facets',
+                    attribute: 'categories'
+                }),
+                instantsearch.widgets.rangeSlider({
+                    container: '#price-range',
+                    attribute: 'price'
+                })
+            ]);
+
+            search.start();
+        });
+    </script>
+</body>
+</html>
